@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from mangum import Mangum
 
 
-class Book(BaseModel):
+class Student(BaseModel):
     name: str
     subject: Literal["Physics", "Chemistry"]
     fees: float
