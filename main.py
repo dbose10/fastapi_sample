@@ -11,17 +11,17 @@ from mangum import Mangum
 
 class Book(BaseModel):
     name: str
-    genre: Literal["fiction", "non-fiction"]
-    price: float
-    book_id: Optional[str] = uuid4().hex
+    subject: Literal["Physics", "Chemistry"]
+    fees: float
+    student_id: Optional[str] = uuid4().hex
 
 
-BOOKS_FILE = "books.json"
-BOOKS = []
+STUDENTS_FILE = "students.json"
+STUDENTS = []
 
-if os.path.exists(BOOKS_FILE):
-    with open(BOOKS_FILE, "r") as f:
-        BOOKS = json.load(f)
+if os.path.exists(STUDENTS_FILE):
+    with open(STUDENTS_FILE, "r") as f:
+        STUDENTS = json.load(f)
 
 app = FastAPI()
 handler = Mangum(app)
@@ -32,40 +32,40 @@ async def root():
     return {"message": "Welcome to Definite Success Classes!"}
 
 
-@app.get("/random-book")
-async def random_book():
-    return random.choice(BOOKS)
+@app.get("/random-student")
+async def random_student():
+    return random.choice(STUDENTS)
 
 
-@app.get("/list-books")
-async def list_books():
-    return {"books": BOOKS}
+@app.get("/list-student")
+async def list_student():
+    return {"STUDENTS": STUDENTS}
 
 
-@app.get("/book_by_index/{index}")
-async def book_by_index(index: int):
-    if index < len(BOOKS):
-        return BOOKS[index]
+@app.get("/student_by_index/{index}")
+async def student_by_index(index: int):
+    if index < len(STUDENTS):
+        return STUDENTS[index]
     else:
-        raise HTTPException(404, f"Book index {index} out of range ({len(BOOKS)}).")
+        raise HTTPException(404, f"Student index {index} out of range ({len(STUDENTS)}).")
 
 
-@app.post("/add-book")
-async def add_book(book: Book):
-    book.book_id = uuid4().hex
-    json_book = jsonable_encoder(book)
-    BOOKS.append(json_book)
+@app.post("/add-student")
+async def add_student(student: Student):
+    student.student_id = uuid4().hex
+    json_book = jsonable_encoder(student)
+    STUDENTS.append(json_book)
 
-    with open(BOOKS_FILE, "w") as f:
-        json.dump(BOOKS, f)
+    with open(STUDENTS_FILE, "w") as f:
+        json.dump(STUDENTS, f)
 
-    return {"book_id": book.book_id}
+    return {"student_id": student.student_id}
 
 
-@app.get("/get-book")
-async def get_book(book_id: str):
-    for book in BOOKS:
-        if book.book_id == book_id:
-            return book
+@app.get("/get-student")
+async def get_student(student_id: str):
+    for student in STUDENTS:
+        if student.student_id == student_id:
+            return student
 
-    raise HTTPException(404, f"Book ID {book_id} not found in database.")
+    raise HTTPException(404, f"Student ID {student_id} not found in database.")
